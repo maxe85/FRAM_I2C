@@ -12,21 +12,21 @@ uint8_t FRAM_I2C::begin(void)
 	uint8_t devices=0;
 	for ( ; devices < no_dev; devices++)
 	{
-	#ifdef TEST_DEVICES_SERIAL
 		Wire.beginTransmission(i2c_addr+devices);
-	#endif
+		#ifdef TEST_DEVICES_SERIAL
 		Serial.print("0x");Serial.print(i2c_addr+devices,HEX);Serial.print("\t");
+		#endif
 		if (!Wire.endTransmission())
 		{
-	#ifdef TEST_DEVICES_SERIAL
+			#ifdef TEST_DEVICES_SERIAL
 			Serial.println("exists");
-	#endif
+			#endif
 		}
 		else
 		{
-	#ifdef TEST_DEVICES_SERIAL
+			#ifdef TEST_DEVICES_SERIAL
 			Serial.println("not found");
-	#endif
+			#endif
 			break;
 		}
 	}
@@ -47,7 +47,7 @@ uint8_t FRAM_I2C::begin(void)
 	#else
 	no_dev = devices;
 	#endif
-	return devices;
+	return no_dev;
 #else
 void FRAM_I2C::begin(void) 
 {
@@ -66,6 +66,8 @@ void FRAM_I2C::clear_all_memory(uint8_t steps)
 		Wire.write( 0x00 );
 		Wire.endTransmission();
 	}
+	
+	
 }
 
 uint16_t FRAM_I2C::getAddrSpace(void)
@@ -103,7 +105,6 @@ uint8_t FRAM_I2C::read (uint16_t framAddr) // only every 4th byte is accessabile
 	Wire.requestFrom(i2c_addr|uint8_t(framAddr>>13), 1);
 	return Wire.read();
 }
-
 void FRAM_I2C::read(uint16_t framAddr, uint8_t * array, uint8_t len)
 {
 	Wire.beginTransmission(i2c_addr|uint8_t(framAddr>>13));
